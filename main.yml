@@ -1,0 +1,20 @@
+---
+
+- hosts: cluster
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: deps
+
+- hosts: master
+  gather_facts: no
+  become: yes
+  roles:
+    - role: k3s/master
+
+
+- hosts: agent
+  gather_facts: no
+  become: yes
+  roles:
+    - role: k3s/agent

@@ -1,0 +1,46 @@
+---
+
+- name: Ensure NFS mountpoint is present
+  file:
+    path: "{{ nfs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Ensure /var/lib/rancher exists
+  file:
+    path : /var/lib/rancher
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Debug print the UUID for the rancher iSCSI volume
+  debug:
+    msg: UUID for the rancher iSCSI volume is "{{ ansible_devices.sda.links.uuids[0] }}"
+
+- name: Ensure /var/lib/rancher is mounted
+  when: ansible_devices.sda is defined
+  mount:
+    state: mounted
+    path: /var/lib/rancher
+    src: UUID="{{ ansible_devices.sda.links.uuids[0] }}"
+    fstype: ext4
+    opts: defaults,relatime,_netdev
+
+- name: Ensure NFS mount is configured and mounted
+  mount:
+    state: mounted
+    path: "{{ nfs_dir }}"
+    src: "{{ nfs_server_address}}:{{ nfs_server_path }}"
+    fstype: nfs
+    opts: defaults,vers=3,proto=tcp,nolock,relatime,sec=sys
+
+- name: Download k3s install script
+  get_url:
+    url: https://get.k3s.io
+    dest: "{{ k3s_install }}"
+    owner: root
+    group: root
+    mode: 0755

@@ -1,0 +1,14 @@
+[cluster:children]
+master
+agent
+
+[master]
+master-node-host-name
+
+[agent]
+agent-host-name-[2:4]
+
+[cluster:vars]
+nfs_server_address=1.2.3.4
+nfs_server_path=/shared/volume
+nfs_dir=/nfs_shared_volume

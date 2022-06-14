@@ -1,0 +1,7 @@
+---
+ansible_user: pi
+ansible_python_interpreter: /usr/bin/python3
+master_ip: "{{ hostvars[groups['master'][0]]['ansible_facts']['default_ipv4']['address'] | default(groups['master'][0]) }}"
+k3s_install: /tmp/k3s_install.sh
+k3s_token_file: /var/lib/rancher/k3s/server/node-token
+k3s_binary: /usr/local/bin/k3s

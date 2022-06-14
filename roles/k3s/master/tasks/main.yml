@@ -1,0 +1,35 @@
+---
+
+- name: Check for existing installation
+  stat:
+    path: "{{ k3s_token_file }}"
+  register: token_already_present
+
+- name: Execute k3s installation script on master
+  command: "{{ k3s_install }}"
+  when: not token_already_present.stat.exists
+
+- name: Wait for token file
+  wait_for:
+    path: "{{ k3s_token_file }}"
+
+- name: Read token file contents
+  slurp:
+    path: "{{ k3s_token_file}}"
+  register: k3s_token
+
+- name: Store k3s token as ansible fact
+  set_fact:
+    token: "{{ k3s_token.content | b64decode | regex_replace('\n', '') }}"
+
+- name: Download kube config to local host for user "{{ lookup('env','USER') }}"
+  fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: "~{{ lookup('env','USER') }}/.kube/config"
+    flat: yes
+
+- name: Patch local kubeconfig server address to "https://{{ master_ip }}:6443"
+  delegate_to: localhost
+  become: false
+  command: kubectl config set-cluster default --server "https://{{ master_ip }}:6443"
+

@@ -1,0 +1,13 @@
+---
+
+- name: Check for existing installation
+  stat:
+    path: "{{ k3s_binary }}"
+  register: already_installed
+
+- name: Install k3s agent
+  command: "{{ k3s_install }}"
+  environment:
+    K3S_URL: "https://{{ master_ip }}:6443"
+    K3S_TOKEN: "{{ hostvars[groups['master'][0]]['token'] }}"
+  when: not already_installed.stat.exists
