@@ -8,6 +8,9 @@
 - name: Execute k3s installation script on master
   command: "{{ k3s_install }}"
   when: not token_already_present.stat.exists
+  environment:
+    K3S_KUBECONFIG_MODE: "644"
+    INSTALL_K3S_EXEC: "{{ k3s_server_flags }}"
 
 - name: Wait for token file
   wait_for:
