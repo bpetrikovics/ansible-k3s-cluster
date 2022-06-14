@@ -9,9 +9,10 @@ extracted from the master server and used when installing each of the agents.
 
 Please note it's specific to my environment and my needs, that is:
 
-* All nodes have a "central" NFS volume mounted, which serves as a cluster shared storage. This share should already be prepared on the NFS server.
-* An additional volume for /var/lib/rancher is mounted over iSCSI as containderd does not like to have its directory on NFS. The iSCSI discovery and
-the device should already be accessible as /dev/sda
+* Base OS config already done and SSH public key authentication configured
+* All nodes run with netboot and NFS root, with a "central" NFS volume mounted as cluster shared storage. This share should already be prepared on the NFS server.
+* An additional volume for /var/lib/rancher is mounted over iSCSI as containderd does not like to have its directory on NFS. The iSCSI discovery/login should be
+previously performed and the device already be accessible as /dev/sda
 * Kubeconfig will be downloaded to the ansible client host and copied into ~/.kube/config; it will also be patched to point to the correct, externally
 visible IP address (instead of 127.0.0.1)
 
