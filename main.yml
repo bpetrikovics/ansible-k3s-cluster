@@ -12,7 +12,6 @@
   roles:
     - role: k3s/master
 
-
 - hosts: agent
   gather_facts: no
   become: yes
